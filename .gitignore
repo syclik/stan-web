@@ -1,0 +1,5 @@
+*.o
+*.d
+*~
+*.cpp
+linear_model
