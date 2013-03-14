@@ -1,0 +1,6 @@
+[submodule "d3"]
+	path = d3
+	url = git://github.com/mbostock/d3.git
+[submodule "stan"]
+	path = stan
+	url = git://github.com/stan-dev/stan.git
