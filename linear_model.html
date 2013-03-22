@@ -3,14 +3,6 @@
 <head>
   <script type="text/javascript" src="d3/d3.min.js"></script>
   <style>
-    .enter {
-      opacity: 0.5;
-      stroke: black;
-    }
-    .update {
-    }
-  </style>
-  <style>
     .chart {
     
     }
@@ -35,7 +27,21 @@
       <!-- /the chart goes here -->
   </div>
   <script>
-    var samples;
+    var allSamples;
+
+    var size = 400;
+    var chart = d3.select("body").append("svg")
+                  .attr("width", size)
+                  .attr("height", size)
+                  .style("border", "1px solid black");
+
+    var x = d3.scale.linear()
+                    .domain([-1,1])
+                    .range([0,size]);
+    var y = d3.scale.linear()
+                    .domain([-1,1])
+                    .range([size,0]);
+
 
     d3.csv("models/clean_samples.csv", function(error,data) {
       data.forEach(function(d) {
@@ -46,43 +52,30 @@
           d.beta = parseFloat(d.beta);
           d.sigma_noise = parseFloat(d.sigma_noise);
        });
+      allSamples = data;
+
+      var index = 0;
+      setInterval(function() {
+        if (index < allSamples.length) {
+          update(allSamples[index++]);
+        }
+      }, 10);
     });
 
+    function update(data) {
+      var lines = chart.selectAll("line")
+                       .data([data]);
+          lines.enter().append("line");
 
-    var size = 400;
-    var x = d3.scale.linear()
-              .domain([-1,1])
-              .range([0,size]);
-    var y = d3.scale.linear()
-              .domain([-1,1])              
-              .range([size,0]);
-         
-      
-    // add a chart
-    var size = 400;
-    var chart = d3.select("body").append("svg")
-                  .attr("width", size)
-                  .attr("height", size)
-                  .style("border", "1px solid black");
-
-//    var lines = chart.selectAll("line")
-//                      .data(data)
-//                      .enter()
-//                      .append("line");
-
-//    var duration = 5000;
-//    lines.transition().delay(function(d,i) {return i / data.length * duration;})
-//         .style("opacity", 0.1);
-
-//     var lineAttributes = lines.attr("x1", 0)
-// .attr("y1", function(d) { return size/2 - (d.alpha - d.beta) * size/2; })
-//                                 .attr("x2", size)
-// .attr("y2", function(d) { return size/2 - (d.alpha + d.beta) * size/2; })
-//                                 .attr("stroke-width", 1)
-//                                 .attr("stroke", "black");
-
-
-  
+      var lineAttributes 
+          = lines
+                 .attr("x1", x(-1))
+                 .attr("y1", y(data.alpha - data.beta))
+                 .attr("x2", x(1))
+                 .attr("y2", y(data.alpha + data.beta))
+                 .style("stroke-width", 1)
+                 .style("stroke", "blue");
+    }
   </script>
 </body>
 </html>
