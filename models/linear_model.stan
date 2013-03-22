@@ -4,7 +4,7 @@ data {
   vector<lower=-1, upper=1>[N] y;
 }
 parameters {
-  real alpha;
+  real<lower=-1,upper=1> alpha;
   real beta;
   real<lower=0> sigma_noise;
 }
