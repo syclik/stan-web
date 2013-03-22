@@ -2,15 +2,87 @@
 <html>
 <head>
   <script type="text/javascript" src="d3/d3.min.js"></script>
-  <script>
-     function draw(error,data) {
-        alert("HERE");
-     }
-  </script>
+  <style>
+    .enter {
+      opacity: 0.5;
+      stroke: black;
+    }
+    .update {
+    }
+  </style>
+  <style>
+    .chart {
+    
+    }
+    
+    .main text {
+        font: 10px sans-serif;
+    }
+    
+    .axis line, .axis path {
+        shape-rendering: crispEdges;
+        stroke: black;
+        fill: none;
+    }
+    
+    circle {
+        fill: steelblue;
+    }
+  </style>
 </head>
 <body>
+  <div class='content'>
+      <!-- /the chart goes here -->
+  </div>
   <script>
-    d3.csv("models/clean_samples.csv", draw);
+    var samples;
+
+    d3.csv("models/clean_samples.csv", function(error,data) {
+      data.forEach(function(d) {
+          d.lp__ = parseFloat(d.lp__);
+          d.treedepth__ = parseFloat(d.treedepth__);
+          d.stepsize__ = parseFloat(d.stepsize__);
+          d.alpha = parseFloat(d.alpha);
+          d.beta = parseFloat(d.beta);
+          d.sigma_noise = parseFloat(d.sigma_noise);
+       });
+    });
+
+
+    var size = 400;
+    var x = d3.scale.linear()
+              .domain([-1,1])
+              .range([0,size]);
+    var y = d3.scale.linear()
+              .domain([-1,1])              
+              .range([size,0]);
+         
+      
+    // add a chart
+    var size = 400;
+    var chart = d3.select("body").append("svg")
+                  .attr("width", size)
+                  .attr("height", size)
+                  .style("border", "1px solid black");
+
+//    var lines = chart.selectAll("line")
+//                      .data(data)
+//                      .enter()
+//                      .append("line");
+
+//    var duration = 5000;
+//    lines.transition().delay(function(d,i) {return i / data.length * duration;})
+//         .style("opacity", 0.1);
+
+//     var lineAttributes = lines.attr("x1", 0)
+// .attr("y1", function(d) { return size/2 - (d.alpha - d.beta) * size/2; })
+//                                 .attr("x2", size)
+// .attr("y2", function(d) { return size/2 - (d.alpha + d.beta) * size/2; })
+//                                 .attr("stroke-width", 1)
+//                                 .attr("stroke", "black");
+
+
+  
   </script>
 </body>
 </html>
