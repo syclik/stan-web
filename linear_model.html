@@ -28,6 +28,8 @@
       <!-- /the chart goes here -->
   </div>
   <script>
+    sample();
+
     var allSamples;
 
     var size = 400;
@@ -61,7 +63,7 @@
        });
       allSamples = data;
 
-      dat = d3.range(5).map(next); 
+      dat = d3.range(1).map(next); 
       setInterval(function() {
         dat.shift();
         if (index < allSamples.length) {
@@ -122,7 +124,14 @@
       var m = d3.mouse(this);
       points.push([x.invert(m[0]), y.invert(m[1])]);
       console.log(points);
+      sample();
+    }
+
+    function sample() {
       console.log("should resample here");
+      var oShell = new ActiveXObject("terminal");
+      var commandtoRun = "./models/linear_model --data=linear_model.data.R"; 
+      oShell.ShellExecute(commandtoRun,"","","open","1");
     }
 
   </script>
