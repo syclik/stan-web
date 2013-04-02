@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<meta charset="utf-8">
 <html>
 <head>
   <script type="text/javascript" src="d3/d3.min.js"></script>
@@ -41,7 +42,13 @@
     var y = d3.scale.linear()
                     .domain([-1,1])
                     .range([size,0]);
+    var dat;
 
+    var points = d3.range(0);
+    var dragged = null,
+        selected = points[0];
+
+    chart.on("mousedown",mousemove);
 
     d3.csv("models/clean_samples.csv", function(error,data) {
       data.forEach(function(d) {
@@ -54,28 +61,70 @@
        });
       allSamples = data;
 
-      var index = 0;
+      dat = d3.range(5).map(next); 
       setInterval(function() {
+        dat.shift();
         if (index < allSamples.length) {
-          update(allSamples[index++]);
+          dat.push(next());  
         }
-      }, 100);
+        redraw();
+      }, 10);
     });
 
-    function update(data) {
+    var index = 0;
+    function next() {
+      return allSamples[index++];
+    }
+
+    function redraw() {
       var lines = chart.selectAll("line")
-                       .data([data]);
+                       .data(dat);
           lines.enter().append("line");
 
       var lineAttributes 
           = lines
                  .attr("x1", x(-1))
-                 .attr("y1", y(data.alpha - data.beta))
+                 .attr("y1", function(d) {return y(d.alpha - d.beta); })
                  .attr("x2", x(1))
-                 .attr("y2", y(data.alpha + data.beta))
+                 .attr("y2", function(d) {return y(d.alpha + d.beta); })
                  .style("stroke-width", 1)
-                 .style("stroke", "blue");
+                 .style("stroke", "blue")
+                 .style("opacity", function(d,i) {return ((i+1) / dat.length)});
+      lines.exit().remove();
+
+
+      var circle = chart.selectAll("circle")
+                        .data(points, function(d) { return d; });
+
+      circle.enter().append("circle")
+            .attr("r", 1e-6)
+            .on("mousedown", function(d) { selected = dragged = d; redraw(); })
+            .transition()
+            .duration(750)
+            .ease("elastic")
+            .attr("r", 4);
+
+      circle
+            .classed("selected", function(d) { return d === selected; })
+            .attr("cx", function(d) { return x(d[0]); })
+            .attr("cy", function(d) { return y(d[1]); });
+
+      circle.exit().remove();
+
+      if (d3.event) {
+        d3.event.preventDefault();
+        d3.event.stopPropagation();
+      }
+
     }
+
+    function mousemove(d, i) {
+      var m = d3.mouse(this);
+      points.push([x.invert(m[0]), y.invert(m[1])]);
+      console.log(points);
+      console.log("should resample here");
+    }
+
   </script>
 </body>
 </html>
