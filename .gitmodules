@@ -4,3 +4,6 @@
 [submodule "stan"]
 	path = stan
 	url = git://github.com/stan-dev/stan.git
+[submodule "websocketpp"]
+	path = websocketpp
+	url = git://github.com/zaphoyd/websocketpp.git
