@@ -7,3 +7,6 @@
 [submodule "websocketpp"]
 	path = websocketpp
 	url = git://github.com/zaphoyd/websocketpp.git
+[submodule "wt"]
+	path = wt
+	url = git://github.com/kdeforche/wt.git
