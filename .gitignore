@@ -1,6 +1,5 @@
 *.o
 *.d
 *~
-*.cpp
 linear_model
 samples.csv
