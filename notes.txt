@@ -52,6 +52,11 @@ g++ -I . -I ../stan/src                                 \
 
 
 
+Build boost thread library?
+---------------------------
+cd stan;
+bjam toolset=g++ variant=release threading=multiy link=shared thread
+
 
 
 Compiling a wt project
