@@ -1,0 +1,50 @@
+Using wt
+--------
+0. Following instructions at wt/INSTALL.html
+
+1. Create build directory
+cd wt; mkdir build; cd build;
+
+2. Configure the library
+cmake ../
+
+-- had to set the right boost library using
+ccmake ../
+
+3. Build the library
+make
+
+4. Install the library
+sudo make install
+
+
+Run examples using wthttpd
+1. Build the examples
+make -C examples
+
+2. Run the Hangman example
+cd ../examples/hangman
+ln -s ../../resources .
+../../build/examples/hangman/hangman.wt --docroot . --http-address 0.0.0.0 --http-port 8080
+
+
+
+
+
+From the home directory
+-----------------------
+cd stan; make CC=clang++ bin/stanc; 
+bin/stanc ../models/linear_model.stan --o=../models/linear_model.hpp --no_main;
+cd ..;
+
+
+
+
+clang++ -I . -I ../stan/src                                 \
+-I ../stan/lib/eigen_3.1.3 -I ../stan/lib/boost_1.53.0      \
+-L ../stan/bin -lstan                                       \
+-I wt/src                                                   \
+-o a.out src/websocket_linear_model.cpp
+
+
+./a.out
