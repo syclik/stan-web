@@ -29,6 +29,27 @@ ln -s ../../resources .
 
 
 
+Build boost thread library?
+---------------------------
+cd stan;
+cd boost_1_53_0/
+
+./bjam --clean
+
+./bjam install variant=release link=static threading=multi \
+       runtime-link=static toolset=gcc \
+       thread chrono date_time
+
+ls bin.v2/libs/thread/build/clang-darwin-4.2.1/release/threading-multi/libboost_thread.dylib 
+
+
+thread.cpp
+
+export DYLD_LIBRARY_PATH=~/dev/stan-web/boost_1_53_0/bin.v2/libs/thread/build/clang-darwin-4.2.1/release/threading-multi:~/dev/stan-web/boost_1_53_0/bin.v2/libs/system/build/clang-darwin-4.2.1/release/threading-multi
+
+
+
+
 
 
 From the home directory
@@ -38,24 +59,18 @@ bin/stanc ../models/linear_model.stan --o=../models/linear_model.hpp --no_main;
 cd ..;
 
 
-
-
-g++ -I . -I ../stan/src                                 \
--I ../stan/lib/eigen_3.1.3 -I ../stan/lib/boost_1.53.0      \
--L ../stan/bin -lstan                                       \
+clang++ -I . -I stan/src                                 \
+-I stan/lib/eigen_3.1.3 -I stan/lib/boost_1.53.0      \
+-L stan/bin -lstan                                       \
 -I wt/src -I wt/build                                                  \
 -L wt/build/src -lwt -l wthttp                              \
+-L /usr/local/lib \
+-l boost_thread \
+-l boost_system \
 -o a.out src/websocket_linear_model.cpp
 
 
 ./a.out
-
-
-
-Build boost thread library?
----------------------------
-cd stan;
-bjam toolset=g++ variant=release threading=multiy link=shared thread
 
 
 
