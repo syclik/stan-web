@@ -1,6 +1,16 @@
 #include <iostream>
 #include <models/linear_model.hpp>
 
+#include <Wt/WApplication>
+#include <Wt/WBreak>
+#include <Wt/WContainerWidget>
+#include <Wt/WLineEdit>
+#include <Wt/WPushButton>
+#include <Wt/WText>
+#include <iostream>
+#include <boost/thread.hpp>
+
+
 typedef linear_model_model_namespace::linear_model_model Model;
 typedef boost::ecuyer1988 rng_t;
 typedef stan::mcmc::adapt_diag_e_nuts<Model, rng_t> a_dm_nuts;
@@ -70,24 +80,70 @@ int run() {
 }
 
 
-int main(int argc, const char* argv[]) {
+/*int main(int argc, const char* argv[]) {
   std::cout 
-    << "------------------------------------------------------------" 
-    << std::endl;
+  << "------------------------------------------------------------" 
+  << std::endl;
 
   int return_code = -1;
   try {
-    return_code = run();
+  return_code = run();
   } catch (std::exception& e) {
-    std::cerr << std::endl << "Exception: " << e.what() << std::endl;
-    std::cerr << "Diagnostic information: " << std::endl 
-              << boost::diagnostic_information(e) << std::endl;
+  std::cerr << std::endl << "Exception: " << e.what() << std::endl;
+  std::cerr << "Diagnostic information: " << std::endl 
+  << boost::diagnostic_information(e) << std::endl;
   }
  
 
   std::cout 
-    << "------------------------------------------------------------" 
-    << std::endl;
+  << "------------------------------------------------------------" 
+  << std::endl;
   return return_code;
+  }*/
+
+#include <Wt/WApplication>
+#include <Wt/WBreak>
+#include <Wt/WContainerWidget>
+#include <Wt/WLineEdit>
+#include <Wt/WPushButton>
+#include <Wt/WText>
+
+class HelloApplication : public Wt::WApplication
+{
+public:
+  HelloApplication(const Wt::WEnvironment& env);
+
+private:
+  Wt::WLineEdit *nameEdit_;
+  Wt::WText *greeting_;
+
+  void greet();
+};
+
+HelloApplication::HelloApplication(const Wt::WEnvironment& env)
+: Wt::WApplication(env)
+{
+  setTitle("Hello world");
+
+  root()->addWidget(new Wt::WText("Your name, please ? "));
+  nameEdit_ = new Wt::WLineEdit(root());
+  Wt::WPushButton *button = new Wt::WPushButton("Greet me.", root());
+  root()->addWidget(new Wt::WBreak());
+  greeting_ = new Wt::WText(root());
+  button->clicked().connect(this, &HelloApplication::greet);
 }
 
+void HelloApplication::greet()
+{
+  greeting_->setText("Hello there, " + nameEdit_->text());
+}
+
+Wt::WApplication *createApplication(const Wt::WEnvironment& env)
+{
+  return new HelloApplication(env);
+}
+
+int main(int argc, char **argv)
+{
+  return Wt::WRun(argc, argv, &createApplication);
+}
