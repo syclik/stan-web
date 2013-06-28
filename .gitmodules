@@ -4,6 +4,3 @@
 [submodule "stan"]
 	path = stan
 	url = git://github.com/stan-dev/stan.git
-[submodule "wt"]
-	path = wt
-	url = git://github.com/kdeforche/wt.git
