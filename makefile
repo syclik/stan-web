@@ -1,4 +1,5 @@
-CC=clang++
+CC = clang++
+STANC = stan/bin/stanc
 
 help:
 	@echo 'Help -- list of targets:'
@@ -7,13 +8,23 @@ help:
 .PHONY: update
 update :
 	@echo '------------------------------------------------------------'
-	@echo 'Updating git submodules'
+	@echo '--- Updating git submodules'
+	@echo ''
 	git pull
 	cd stan; git pull; cd ..
 
+src/% : src/%.cpp models/%.hpp
+	@echo '------------------------------------------------------------'
+	@echo '--- Building $@'
+	@echo ''
 
-models/linear_model.hpp : stan/bin/stanc
-	@echo 'building ' $@
 
-stan/bin/stanc :
+models/%.hpp : models/%.stan stan/bin/stanc
+	@echo '------------------------------------------------------------'
+	@echo '--- Buidling $@'
+	@echo ''
+	$(STANC) $< --o=$@ --no_main
+
+$(STANC) :
 	@echo 'building stan/bin/stanc'
+	cd stan; make bin/stanc CC=$(CC) -j2
