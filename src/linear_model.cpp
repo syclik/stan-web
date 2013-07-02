@@ -1,15 +1,7 @@
+#include <node.h>
+#include <v8.h>
 #include <iostream>
 #include <models/linear_model.hpp>
-
-#include <Wt/WApplication>
-#include <Wt/WBreak>
-#include <Wt/WContainerWidget>
-#include <Wt/WLineEdit>
-#include <Wt/WPushButton>
-#include <Wt/WText>
-#include <iostream>
-#include <boost/thread.hpp>
-
 
 typedef linear_model_model_namespace::linear_model_model Model;
 typedef boost::ecuyer1988 rng_t;
@@ -39,7 +31,12 @@ struct settings {
 };
 
 
-int run() {
+
+using namespace v8;
+
+Handle<Value> Sample(const Arguments& args) {
+  HandleScope scope;
+  
   settings settings;
 
   Model model(settings.data, &std::cout);
@@ -59,13 +56,8 @@ int run() {
   stan::mcmc::sample s(cont_params, disc_params, 0, 0);
   for (int n = 0 ; n < settings.num_warmup; n++) {
     s = sampler.transition(s);
-    // std::cout << n << ")  s: ";
-    // for (int i = 0; i < s.size_cont(); i++)
-    //   std::cout << " " << s.cont_params(i);
-    // std::cout << std::endl;
   }
   
-  std::cout << "sampling now" << std::endl;
   sampler.disengage_adaptation();
   for (int n = 0 ; n < settings.num_warmup; n++) {
     s = sampler.transition(s);
@@ -74,76 +66,63 @@ int run() {
       std::cout << " " << s.cont_params(i);
     std::cout << std::endl;
   }
-  
-
-  return 0;
-}
-
-
-/*int main(int argc, const char* argv[]) {
-  std::cout 
-  << "------------------------------------------------------------" 
-  << std::endl;
-
-  int return_code = -1;
-  try {
-  return_code = run();
-  } catch (std::exception& e) {
-  std::cerr << std::endl << "Exception: " << e.what() << std::endl;
-  std::cerr << "Diagnostic information: " << std::endl 
-  << boost::diagnostic_information(e) << std::endl;
-  }
+  //Local<Number> num = Number::New();
  
 
-  std::cout 
-  << "------------------------------------------------------------" 
-  << std::endl;
-  return return_code;
-  }*/
+  return scope.Close(String::New("world"));
+}
 
-#include <Wt/WApplication>
-#include <Wt/WBreak>
-#include <Wt/WContainerWidget>
-#include <Wt/WLineEdit>
-#include <Wt/WPushButton>
-#include <Wt/WText>
-
-class HelloApplication : public Wt::WApplication
-{
+class LinearModel : public node::ObjectWrap {
 public:
-  HelloApplication(const Wt::WEnvironment& env);
+  static void Init(v8::Handle<v8::Object> exports) {
+    // Prepare constructor template
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
+    tpl->SetClassName(String::NewSymbol("LinearModel"));
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    // Prototype
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("sample"),
+                                  FunctionTemplate::New(Sample)->GetFunction());
+
+    Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
+    exports->Set(String::NewSymbol("LinearModel"), constructor);
+  }
 
 private:
-  Wt::WLineEdit *nameEdit_;
-  Wt::WText *greeting_;
+  LinearModel() {}
+  ~LinearModel() {}
 
-  void greet();
+  static v8::Handle<v8::Value> New(const v8::Arguments& args) {
+    HandleScope scope;
+
+    LinearModel* obj = new LinearModel();
+    // DO WARMUP.
+    obj->counter_ = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
+    obj->Wrap(args.This());
+    
+    return args.This();
+  }
+  
+  static v8::Handle<v8::Value> Sample(const v8::Arguments& args) {
+    HandleScope scope;
+    
+    // PULL SINGLE VALUE
+    
+    LinearModel* obj = ObjectWrap::Unwrap<LinearModel>(args.This());
+    obj->counter_ += 1;
+    
+    return scope.Close(Number::New(obj->counter_));
+  }
+
+  double counter_;
+
+
 };
 
-HelloApplication::HelloApplication(const Wt::WEnvironment& env)
-: Wt::WApplication(env)
-{
-  setTitle("Hello world");
 
-  root()->addWidget(new Wt::WText("Your name, please ? "));
-  nameEdit_ = new Wt::WLineEdit(root());
-  Wt::WPushButton *button = new Wt::WPushButton("Greet me.", root());
-  root()->addWidget(new Wt::WBreak());
-  greeting_ = new Wt::WText(root());
-  button->clicked().connect(this, &HelloApplication::greet);
+void init(Handle<Object> exports) {
+  LinearModel::Init(exports);
+  exports->Set(String::NewSymbol("sample"),
+               FunctionTemplate::New(Sample)->GetFunction());
 }
 
-void HelloApplication::greet()
-{
-  greeting_->setText("Hello there, " + nameEdit_->text());
-}
-
-Wt::WApplication *createApplication(const Wt::WEnvironment& env)
-{
-  return new HelloApplication(env);
-}
-
-int main(int argc, char **argv)
-{
-  return Wt::WRun(argc, argv, &createApplication);
-}
+NODE_MODULE(linear_model, init)
