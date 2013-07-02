@@ -1,3 +1,29 @@
+node.js: addon.
+--------------------
+1) added: binding.gyp
+2) export CC=clang++
+2) build:
+   node-gyp configure
+   node-gyp build
+
+   or:
+   make linear_model
+3) 
+
+node
+var addon = require('./build/Release/linear_model');
+var linear_model = new addon.LinearModel(10);
+console.log(linear_model.sample());
+console.log(linear_model.sample());
+console.log(linear_model.sample());
+
+
+websocketpp
+--------------------
+export BOOST_INCLUDES=/opt/local/include/boost
+export BOOST_LIBS=/opt/local/lib
+export CXX="clang++ -D_WEBSOCKETPP_NO_CPP11_SYSTEM_ERROR_"
+scons examples/echo_server
 
 Build boost thread library?
 ---------------------------
