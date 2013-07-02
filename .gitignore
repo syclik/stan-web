@@ -6,3 +6,5 @@ samples.csv
 
 models/*.hpp
 models/*.cpp
+
+build/
