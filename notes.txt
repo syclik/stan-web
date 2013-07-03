@@ -1,5 +1,8 @@
 node.js: addon.
 --------------------
+Following: http://nodejs.org/api/addons.html
+
+
 1) added: binding.gyp
 2) export CC=clang++
 2) build:
