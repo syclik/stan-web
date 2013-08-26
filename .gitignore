@@ -8,3 +8,5 @@ models/*.hpp
 models/*.cpp
 
 build/
+
+node_modules

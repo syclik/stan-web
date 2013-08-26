@@ -21,6 +21,17 @@ console.log(linear_model.sample());
 console.log(linear_model.sample());
 
 
+
+unit testing for Node.js: mocha
+--------------------
+http://visionmedia.github.io/mocha/
+
+Installation:
+$ npm install -g mocha
+
+
+
+
 websocketpp
 --------------------
 export BOOST_INCLUDES=/opt/local/include/boost
