@@ -147,7 +147,8 @@ private:
     // std::cout << std::endl;
     
     Handle<Array> s = Array::New(3);
-    for (int i = 0; i < 3; i++)
+    //for (int i = 0; i < 3; i++)
+    for (int i = 4; i < 7; i++)
       s->Set(i, v8::Number::New(obj->s->cont_params(i)));
     
     //return scope.Close(Number::New(obj->counter_));
