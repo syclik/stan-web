@@ -12,14 +12,26 @@ function AppCtrl($scope, $http) {
     });*/
 }
 
-function LinearModelCtrl($scope, $http) {
+function LinearModelCtrl($scope, $http, $timeout) {
   $http({method: 'GET', url: '/api/sample'})
     .success(function(data, status, headers, config) {
-      $scope.data = data;
+	$scope.data = data;
     })
     .error(function(data, status, headers, config) {
       $scope.data = 'ERROR';
     });
+    $scope.foo = 0;
+    function tick() {
+	$http({method: 'GET', url: '/api/sample'})
+	    .success(function(data, status, headers, config) {
+		$scope.foo = data;
+	    })
+	    .error(function(data, status, headers, config) {
+		$scope.foo = 'ERROR';
+	    });
+	$timeout(tick, 100);
+    };
+    tick();
 }
 
 
