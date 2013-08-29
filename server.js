@@ -1,14 +1,28 @@
 var express = require('express');
-var api = require('./api');
+var routes = require('./routes/index.js');
+var api = require('./routes/api');
+var http = require('http');
+var path = require('path');
+
 var app = module.exports = express();
 
+/**
+ * Configuration
+ **/
 app.set('port', 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(app.router);
+
+// Routes
+app.get('/', routes.index);
+app.get('/partial/:name', routes.partial);
+
+// JSON API
 app.get('/api/sample', api.sample);
 
 
-app.get('/hello.txt', function(req, res){
-  res.send('hello');
+http.createServer(app).listen(app.get('port'), function () {
+  console.log('Express server listening on port ' + app.get('port'));
 });
-
-app.listen(3000);
-console.log('Listening on port 3000');

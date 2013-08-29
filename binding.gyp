@@ -11,7 +11,7 @@
         'stan/lib/eigen_3.1.3',
       ],
       'link_settings': {
-        'libraries': ['-L/home/jadams41/stan-web/stan/bin', '-lstan'],
+        'libraries': ['-L../stan/bin', '-lstan'],
       },
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions', '-fno-rtti' ],
