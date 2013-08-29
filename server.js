@@ -1,11 +1,13 @@
 var express = require('express');
-var app = express();
-var addon = require('./build/Release/linear_model');
-var linear_model = new addon.LinearModel(100);
+var api = require('./api');
+var app = module.exports = express();
+
+app.set('port', 3000);
+app.get('/api/sample', api.sample);
 
 
 app.get('/hello.txt', function(req, res){
-  res.send(linear_model.sample());
+  res.send('hello');
 });
 
 app.listen(3000);
