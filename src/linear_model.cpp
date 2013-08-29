@@ -147,9 +147,21 @@ private:
     // std::cout << std::endl;
     
     Handle<Array> s = Array::New(3);
+    
+    std::vector<double> cont_params;
+    std::vector<int> disc_params;
+    obj->s->cont_params(cont_params);
+    obj->s->disc_params(disc_params);
+    stan::io::reader<double> in__(cont_params,disc_params);
+    double alpha = in__.scalar_lub_constrain(-(1),1);
+    double beta = in__.scalar_lub_constrain(-(10),10);
+    double sigma_noise = in__.scalar_lb_constrain(0);
+    
+    s->Set(0, v8::Number::New(alpha));
+    s->Set(1, v8::Number::New(beta));
+    s->Set(2, v8::Number::New(sigma_noise));
     //for (int i = 0; i < 3; i++)
-    for (int i = 4; i < 7; i++)
-      s->Set(i, v8::Number::New(obj->s->cont_params(i)));
+    //s->Set(i, v8::Number::New(obj->s->cont_params(i)));
     
     //return scope.Close(Number::New(obj->counter_));
     return scope.Close(s);
